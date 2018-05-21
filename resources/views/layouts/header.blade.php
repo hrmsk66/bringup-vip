@@ -15,14 +15,11 @@
 
 <div class="tabs is-fullwidth">
     <ul>
-        <router-link tag="li" to="/rootcert">
-            <a>Install Root Certificate</a>
+        <router-link tag="li" to="/controllers">
+            <a>BringUp Controllers</a>
         </router-link>
-        <router-link tag="li" to="/csr">
-            <a>Issue Certificate</a>
-        </router-link>
-        <router-link tag="li" to="/activate">
-            <a>Activate vEdge</a>
+        <router-link tag="li" to="/vedge">
+            <a>BringUp vEdge</a>
         </router-link>
     </ul>
 </div>

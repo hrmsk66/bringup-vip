@@ -17,21 +17,18 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/rootcert', function () {
+Route::get('/controllers', function () {
     return view('home');
 });
-Route::post('/rootcert/load', 'RootCertController@load');
-Route::post('/rootcert', 'RootCertController@push');
+Route::post('/controllers/load', 'Controllers@load');
+Route::post('/controllers/push', 'Controllers@push');
+Route::post('/controllers/resync', 'Controllers@resync');
+Route::post('/controllers/csr', 'Controllers@csr');
 
-Route::get('/csr', function () {
+Route::get('/vedge', function () {
     return view('home');
 });
-Route::post('/csr', 'NewCertController@create');
-
-Route::get('/activate', function () {
-    return view('home');
-});
-Route::post('/activate/list', 'ActivationController@fetch');
-Route::post('/activate', 'ActivationController@activate');
-
-
+Route::post('/vedge/load', 'vEdge@load');
+Route::post('/vedge/push', 'vEdge@push');
+Route::post('/vedge/list', 'vEdge@fetch');
+Route::post('/vedge/activate', 'vEdge@activate');

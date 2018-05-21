@@ -15,6 +15,8 @@ Decently up-to-date version of:
 - npm
 - php
 - composer
+- curl
+- jq
 
 ## Built With
 

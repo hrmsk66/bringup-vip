@@ -377,137 +377,6 @@ module.exports = {
 /* 1 */
 /***/ (function(module, exports) {
 
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(21);
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(7);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(7);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
 /* globals __VUE_SSR_CONTEXT__ */
 
 // IMPORTANT: Do NOT use ES2015 features in this file.
@@ -612,6 +481,137 @@ module.exports = function normalizeComponent (
   }
 }
 
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(0);
+var normalizeHeaderName = __webpack_require__(21);
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(7);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(7);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
 /* 4 */
@@ -3706,7 +3706,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(12);
-module.exports = __webpack_require__(46);
+module.exports = __webpack_require__(52);
 
 
 /***/ }),
@@ -14709,7 +14709,7 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(15).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(15).setImmediate))
 
 /***/ }),
 /* 15 */
@@ -14779,7 +14779,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 16 */
@@ -14972,7 +14972,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(4)))
 
 /***/ }),
 /* 17 */
@@ -14990,7 +14990,7 @@ module.exports = __webpack_require__(18);
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(6);
 var Axios = __webpack_require__(20);
-var defaults = __webpack_require__(2);
+var defaults = __webpack_require__(3);
 
 /**
  * Create an instance of Axios
@@ -15073,7 +15073,7 @@ function isSlowBuffer (obj) {
 "use strict";
 
 
-var defaults = __webpack_require__(2);
+var defaults = __webpack_require__(3);
 var utils = __webpack_require__(0);
 var InterceptorManager = __webpack_require__(29);
 var dispatchRequest = __webpack_require__(30);
@@ -15612,7 +15612,7 @@ module.exports = InterceptorManager;
 var utils = __webpack_require__(0);
 var transformData = __webpack_require__(31);
 var isCancel = __webpack_require__(9);
-var defaults = __webpack_require__(2);
+var defaults = __webpack_require__(3);
 var isAbsoluteURL = __webpack_require__(32);
 var combineURLs = __webpack_require__(33);
 
@@ -15872,16 +15872,13 @@ module.exports = function spread(callback) {
 
 var routes = [{
   path: '/',
-  redirect: '/rootcert'
+  redirect: '/vedge'
 }, {
-  path: '/rootcert',
-  component: __webpack_require__(37)
+  path: '/controllers',
+  component: __webpack_require__(46)
 }, {
-  path: '/csr',
-  component: __webpack_require__(40)
-}, {
-  path: '/activate',
-  component: __webpack_require__(43)
+  path: '/vedge',
+  component: __webpack_require__(49)
 }];
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_0_vue_router__["a" /* default */]({
@@ -15890,15 +15887,24 @@ var routes = [{
 }));
 
 /***/ }),
-/* 37 */
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */,
+/* 45 */,
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(38)
+var __vue_script__ = __webpack_require__(47)
 /* template */
-var __vue_template__ = __webpack_require__(39)
+var __vue_template__ = __webpack_require__(48)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -15915,7 +15921,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/views/RootCert.vue"
+Component.options.__file = "resources/assets/js/views/Controllers.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -15924,9 +15930,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-13052bf9", Component.options)
+    hotAPI.createRecord("data-v-99bdd958", Component.options)
   } else {
-    hotAPI.reload("data-v-13052bf9", Component.options)
+    hotAPI.reload("data-v-99bdd958", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -15937,7 +15943,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 38 */
+/* 47 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15972,35 +15978,92 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            'ip': '',
-            'cert': '',
-            'loading': false,
-            'failed': []
+            ip1: '',
+            cert1: '',
+            loading1: false,
+            status1: '',
+            failed1: [],
+            vmanageIP2: '',
+            loading2: false,
+            syncRootCertChain2: '',
+            csr3: '',
+            newcert3: ''
         };
     },
 
     computed: {
-        ips: function ips() {
-            return this.ip.replace(' ', '').split(',');
+        ips1: function ips1() {
+            return this.ip1.replace(' ', '').split(',');
         }
     },
     methods: {
         pushCert: function pushCert(target) {
-            return axios.post('/rootcert', {
+            return axios.post('/controllers/push', {
                 ip: target,
-                cert: this.cert
+                cert: this.cert1
             });
         },
-        onSubmit: function onSubmit() {
+        onSubmit1: function onSubmit1() {
             var _this = this;
 
-            this.failed = [];
-            this.loading = true;
-            var promises = this.ips.map(function (ip) {
+            this.failed1 = [];
+            this.loading1 = true;
+            var promises = this.ips1.map(function (ip) {
                 return _this.pushCert(ip);
             });
 
@@ -16013,24 +16076,53 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     if (rcode1 === '0' && rcode2 === '0') {
                         console.log('done ' + response.data.target);
                     } else {
-                        _this.failed.push(response.data.target);
+                        _this.failed1.push(response.data.target);
                     }
                 });
-                _this.loading = false;
+                _this.status1 = 200;
+                _this.loading1 = false;
                 console.log(responses);
-                alert('Finished');
             }).catch(function (error) {
-                _this.loading = false;
+                _this.loading1 = false;
                 console.log(error);
+            });
+        },
+        onSubmit2: function onSubmit2() {
+            var _this2 = this;
+
+            this.loading2 = true;
+            var temp = {
+                vmanageIP: this.vmanageIP2
+            };
+            axios.post('/controllers/resync', temp).then(function (response) {
+                _this2.loading2 = false;
+                _this2.syncRootCertChain2 = response.data.r1.syncRootCertChain;
+                console.log(response);
+            }).catch(function (error) {
+                _this2.loading2 = false;
+                console.log(error);
+            });
+        },
+        onSubmit3: function onSubmit3() {
+            var _this3 = this;
+
+            var temp = {
+                csr: this.csr3
+            };
+            axios.post('/controllers/csr', temp).then(function (response) {
+                console.log(response);
+                _this3.newcert3 = response.data.newcert;
+            }).catch(function (error) {
+                return console.log(error);
             });
         }
     },
     mounted: function mounted() {
-        var _this2 = this;
+        var _this4 = this;
 
-        axios.post('/rootcert/load').then(function (response) {
+        axios.post('/controllers/load').then(function (response) {
             console.log(response);
-            _this2.cert = response.data.cert;
+            _this4.cert1 = response.data.cert;
         }).catch(function (error) {
             return console.log(error);
         });
@@ -16038,7 +16130,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 39 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -16046,355 +16138,344 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "form",
-      {
-        attrs: { method: "POST", action: "/rootcert" },
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.onSubmit($event)
-          }
-        }
-      },
-      [
-        _c("div", { staticClass: "field" }, [
-          _c("label", { staticClass: "label" }, [_vm._v("Target IP Address")]),
-          _vm._v(" "),
-          _c("div", { staticClass: "control" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.ip,
-                  expression: "ip"
-                }
-              ],
-              staticClass: "input",
-              attrs: {
-                type: "text",
-                placeholder: "192.168.0.1, 192.168.0.2, 192.168.0.3",
-                id: "ip",
-                name: "ip",
-                required: ""
-              },
-              domProps: { value: _vm.ip },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.ip = $event.target.value
-                }
-              }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "field" }, [
-          _c("label", { staticClass: "label" }, [_vm._v("Root Certificate")]),
-          _vm._v(" "),
-          _c("div", { staticClass: "control" }, [
-            _c("textarea", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.cert,
-                  expression: "cert"
-                }
-              ],
-              staticClass: "textarea",
-              attrs: {
-                placeholder: "Textarea",
-                rows: "20",
-                spellcheck: "false",
-                id: "cert",
-                name: "cert",
-                required: ""
-              },
-              domProps: { value: _vm.cert },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.cert = $event.target.value
-                }
-              }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "field" }, [
-          _c("div", { staticClass: "control" }, [
-            _c(
-              "button",
-              {
-                class: {
-                  button: true,
-                  "is-link": true,
-                  "is-loading": _vm.loading
-                }
-              },
-              [_vm._v("Submit")]
-            )
-          ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "section" }, [
+    _c("div", { staticClass: "box" }, [
+      _c("h1", { staticClass: "title is-4" }, [
+        _vm._v("1. Install Self-signed Root Certificate")
+      ]),
+      _vm._v(" "),
       _c(
-        "span",
+        "form",
         {
+          attrs: { method: "POST", action: "/vedge/push" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.onSubmit1($event)
+            }
+          }
+        },
+        [
+          _c("div", { staticClass: "field" }, [
+            _c("label", { staticClass: "label" }, [
+              _vm._v("Target IP Address")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "control" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.ip1,
+                    expression: "ip1"
+                  }
+                ],
+                staticClass: "input",
+                attrs: {
+                  type: "text",
+                  placeholder: "192.168.0.1, 192.168.0.2, 192.168.0.3",
+                  id: "ip1",
+                  name: "ip1",
+                  required: ""
+                },
+                domProps: { value: _vm.ip1 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.ip1 = $event.target.value
+                  }
+                }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("label", { staticClass: "label" }, [_vm._v("Root Certificate")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "control" }, [
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.cert1,
+                    expression: "cert1"
+                  }
+                ],
+                staticClass: "textarea",
+                attrs: {
+                  placeholder: "Textarea",
+                  rows: "20",
+                  spellcheck: "false",
+                  id: "cert1",
+                  name: "cert1",
+                  required: ""
+                },
+                domProps: { value: _vm.cert1 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.cert1 = $event.target.value
+                  }
+                }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("div", { staticClass: "control" }, [
+              _c(
+                "button",
+                {
+                  class: {
+                    button: true,
+                    "is-link": true,
+                    "is-loading": _vm.loading1
+                  }
+                },
+                [_vm._v("Submit")]
+              )
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "section" }, [
+        _c(
+          "span",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.failed1.length === 0 && _vm.status1 === 200,
+                expression: "failed1.length === 0 && status1 === 200"
+              }
+            ],
+            staticClass: "help is-success is-size-6"
+          },
+          [_vm._v("Completed")]
+        ),
+        _vm._v(" "),
+        _c(
+          "span",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.failed1.length !== 0,
+                expression: "failed1.length !== 0"
+              }
+            ],
+            staticClass: "help is-danger is-size-6"
+          },
+          [_vm._v("Failed to install the certificate on...")]
+        ),
+        _vm._v(" "),
+        _c("span", {
           directives: [
             {
               name: "show",
               rawName: "v-show",
-              value: _vm.failed.length !== 0,
-              expression: "failed.length !== 0"
+              value: _vm.failed1.length !== 0,
+              expression: "failed1.length !== 0"
             }
           ],
-          staticClass: "help is-danger is-size-6"
-        },
-        [_vm._v("Failed to install the certificate on...")]
-      ),
+          staticClass: "help is-danger is-size-6",
+          domProps: { textContent: _vm._s(_vm.failed1.join(", ")) }
+        })
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "box" }, [
+      _c("h1", { staticClass: "title is-4" }, [
+        _vm._v("2. Re-sync Trust Store on vManage")
+      ]),
       _vm._v(" "),
-      _c("span", {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.failed.length !== 0,
-            expression: "failed.length !== 0"
+      _c(
+        "form",
+        {
+          attrs: { method: "POST", action: "/vedge/resync" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.onSubmit2($event)
+            }
           }
-        ],
-        staticClass: "help is-danger is-size-6",
-        domProps: { textContent: _vm._s(_vm.failed.join(", ")) }
-      })
-    ])
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-13052bf9", module.exports)
-  }
-}
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(3)
-/* script */
-var __vue_script__ = __webpack_require__(41)
-/* template */
-var __vue_template__ = __webpack_require__(42)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/views/CSR.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-f0df2f02", Component.options)
-  } else {
-    hotAPI.reload("data-v-f0df2f02", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            csr: '',
-            newcert: ''
-        };
-    },
-
-    methods: {
-        onSubmit: function onSubmit() {
-            var _this = this;
-
-            var temp = {
-                csr: this.csr
-            };
-            axios.post('/csr', temp).then(function (response) {
-                console.log(response);
-                _this.newcert = response.data.newcert;
-            }).catch(function (error) {
-                return console.log(error);
-            });
-        }
-    }
-});
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "form",
-      {
-        attrs: { method: "POST", action: "/csr" },
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.onSubmit($event)
-          }
-        }
-      },
-      [
-        _c("div", { staticClass: "field is-horizontal" }, [
-          _c("div", { staticClass: "field-body" }, [
-            _c("div", { staticClass: "field" }, [
-              _c("label", { staticClass: "label" }, [_vm._v("CSR")]),
-              _vm._v(" "),
-              _c("div", { staticClass: "control" }, [
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.csr,
-                      expression: "csr"
-                    }
-                  ],
-                  staticClass: "textarea",
-                  attrs: {
-                    placeholder: "Textarea",
-                    rows: "20",
-                    spellcheck: "false",
-                    id: "csr",
-                    name: "csr",
-                    required: ""
-                  },
-                  domProps: { value: _vm.csr },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.csr = $event.target.value
-                    }
-                  }
-                })
-              ])
+        },
+        [
+          _c("div", { staticClass: "field" }, [
+            _c("label", { staticClass: "label" }, [
+              _vm._v("vManage IP Address")
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "field" }, [
-              _c("label", { staticClass: "label" }, [_vm._v("Signed Cert")]),
-              _vm._v(" "),
-              _c("div", { staticClass: "control" }, [
-                _c("textarea", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.newcert,
-                      expression: "newcert"
-                    }
-                  ],
-                  staticClass: "textarea",
-                  attrs: {
-                    placeholder: "Textarea",
-                    rows: "20",
-                    spellcheck: "false",
-                    id: "newcert",
-                    name: "newcert",
-                    disabled: _vm.newcert == ""
-                  },
-                  domProps: { value: _vm.newcert },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.newcert = $event.target.value
-                    }
+            _c("div", { staticClass: "control" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.vmanageIP2,
+                    expression: "vmanageIP2"
                   }
-                })
-              ])
+                ],
+                staticClass: "input",
+                attrs: {
+                  type: "text",
+                  placeholder: "192.168.0.1",
+                  id: "vmanageIP2",
+                  name: "vmanageIP2",
+                  required: ""
+                },
+                domProps: { value: _vm.vmanageIP2 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.vmanageIP2 = $event.target.value
+                  }
+                }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("div", { staticClass: "control" }, [
+              _c(
+                "button",
+                {
+                  class: {
+                    button: true,
+                    "is-link": true,
+                    "is-loading": _vm.loading2
+                  }
+                },
+                [_vm._v("Submit")]
+              )
             ])
           ])
-        ]),
-        _vm._v(" "),
-        _vm._m(0)
-      ]
-    )
+        ]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "section" }, [
+        _c("span", {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.syncRootCertChain2 !== "",
+              expression: "syncRootCertChain2 !== ''"
+            }
+          ],
+          staticClass: "help is-success is-size-6",
+          domProps: {
+            textContent: _vm._s("syncRootCertChain: " + _vm.syncRootCertChain2)
+          }
+        })
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "box" }, [
+      _c("h1", { staticClass: "title is-4" }, [
+        _vm._v("3. Generate Certificate")
+      ]),
+      _vm._v(" "),
+      _c(
+        "form",
+        {
+          attrs: { method: "POST", action: "/csr" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.onSubmit3($event)
+            }
+          }
+        },
+        [
+          _c("div", { staticClass: "field is-horizontal" }, [
+            _c("div", { staticClass: "field-body" }, [
+              _c("div", { staticClass: "field" }, [
+                _c("label", { staticClass: "label" }, [_vm._v("CSR")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "control" }, [
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.csr3,
+                        expression: "csr3"
+                      }
+                    ],
+                    staticClass: "textarea",
+                    attrs: {
+                      placeholder: "Textarea",
+                      rows: "20",
+                      spellcheck: "false",
+                      id: "csr3",
+                      name: "csr3",
+                      required: ""
+                    },
+                    domProps: { value: _vm.csr3 },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.csr3 = $event.target.value
+                      }
+                    }
+                  })
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "field" }, [
+                _c("label", { staticClass: "label" }, [_vm._v("Signed Cert")]),
+                _vm._v(" "),
+                _c("div", { staticClass: "control" }, [
+                  _c("textarea", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.newcert3,
+                        expression: "newcert3"
+                      }
+                    ],
+                    staticClass: "textarea",
+                    attrs: {
+                      placeholder: "Textarea",
+                      rows: "20",
+                      spellcheck: "false",
+                      id: "newcert3",
+                      name: "newcert3",
+                      disabled: _vm.newcert3 == ""
+                    },
+                    domProps: { value: _vm.newcert3 },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.newcert3 = $event.target.value
+                      }
+                    }
+                  })
+                ])
+              ])
+            ])
+          ]),
+          _vm._v(" "),
+          _vm._m(0)
+        ]
+      )
+    ])
   ])
 }
 var staticRenderFns = [
@@ -16414,20 +16495,20 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-f0df2f02", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-99bdd958", module.exports)
   }
 }
 
 /***/ }),
-/* 43 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(3)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(44)
+var __vue_script__ = __webpack_require__(50)
 /* template */
-var __vue_template__ = __webpack_require__(45)
+var __vue_template__ = __webpack_require__(51)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -16444,7 +16525,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/views/Activation.vue"
+Component.options.__file = "resources/assets/js/views/vEdge.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -16453,9 +16534,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4af7d429", Component.options)
+    hotAPI.createRecord("data-v-4e6267a0", Component.options)
   } else {
-    hotAPI.reload("data-v-4af7d429", Component.options)
+    hotAPI.reload("data-v-4e6267a0", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -16466,7 +16547,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 44 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16500,45 +16581,124 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            'vmanageIP': '',
-            'ip': '',
-            'loading': false,
-            'serial': [],
-            'failed': []
+            ip1: '',
+            cert1: '',
+            loading1: false,
+            status1: '',
+            failed1: [],
+            vmanageIP2: '',
+            ip2: '',
+            loading2: false,
+            status2: '',
+            serial2: [],
+            failed2: []
         };
     },
 
     computed: {
-        ips: function ips() {
-            return this.ip.replace(' ', '').split(',');
+        ips1: function ips1() {
+            return this.ip1.replace(' ', '').split(',');
+        },
+        ips2: function ips2() {
+            return this.ip2.replace(' ', '').split(',');
         }
     },
     methods: {
+        pushCert: function pushCert(target) {
+            return axios.post('/vedge/push', {
+                ip: target,
+                cert: this.cert1
+            });
+        },
+        onSubmit1: function onSubmit1() {
+            var _this = this;
+
+            this.failed1 = [];
+            this.loading1 = true;
+            var promises = this.ips1.map(function (ip) {
+                return _this.pushCert(ip);
+            });
+
+            Promise.all(promises).then(function (responses) {
+                responses.forEach(function (response) {
+                    var r1 = response.data.r1;
+                    var r2 = response.data.r1;
+                    var rcode1 = response.data.r1[response.data.r1.length - 1];
+                    var rcode2 = response.data.r2[response.data.r2.length - 1];
+                    if (rcode1 === '0' && rcode2 === '0') {
+                        console.log('done ' + response.data.target);
+                    } else {
+                        _this.failed1.push(response.data.target);
+                    }
+                });
+                _this.status1 = 200;
+                _this.loading1 = false;
+                console.log(responses);
+            }).catch(function (error) {
+                _this.loading1 = false;
+                console.log(error);
+            });
+        },
         fetchSerial: function fetchSerial() {
-            return axios.post('/activate/list', {
-                vmanageIP: this.vmanageIP
+            return axios.post('/vedge/list', {
+                vmanageIP: this.vmanageIP2
             });
         },
         activateDevice: function activateDevice(target, i) {
-            return axios.post('/activate', {
+            return axios.post('/vedge/activate', {
                 ip: target,
-                uuid: this.serial[i]['uuid'],
-                token: this.serial[i]['token']
+                uuid: this.serial2[i]['uuid'],
+                token: this.serial2[i]['token']
             });
         },
-        onSubmit: function onSubmit() {
-            var _this = this;
+        onSubmit2: function onSubmit2() {
+            var _this2 = this;
 
-            this.failed = [];
-            this.loading = true;
+            this.failed2 = [];
+            this.loading2 = true;
             this.fetchSerial().then(function (response) {
-                _this.serial = response.data.vedgelist;
-                var promises = _this.ips.map(function (ip, i) {
-                    return _this.activateDevice(ip, i);
+                console.log(response);
+                _this2.serial2 = response.data.vedgelist;
+                var promises = _this2.ips2.map(function (ip, i) {
+                    return _this2.activateDevice(ip, i);
                 });
                 Promise.all(promises).then(function (responses) {
                     responses.forEach(function (response) {
@@ -16547,25 +16707,35 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         if (rcode1 === '0') {
                             console.log('done ' + response.data.target);
                         } else {
-                            _this.failed.push(response.data.target);
+                            _this2.failed2.push(response.data.target);
                         }
                     });
-                    _this.loading = false;
+                    _this2.status2 = 200;
+                    _this2.loading2 = false;
                     console.log(responses);
-                    alert('Finished');
                 }).catch(function (error) {
-                    _this.loading = false;
+                    _this2.loading2 = false;
                     console.log(error);
                 });
             }).catch(function (error) {
                 return console.log(error);
             });
         }
+    },
+    mounted: function mounted() {
+        var _this3 = this;
+
+        axios.post('/vedge/load').then(function (response) {
+            console.log(response);
+            _this3.cert1 = response.data.cert;
+        }).catch(function (error) {
+            return console.log(error);
+        });
     }
 });
 
 /***/ }),
-/* 45 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -16573,133 +16743,313 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "form",
-      {
-        attrs: { method: "POST", action: "/rootcert" },
-        on: {
-          submit: function($event) {
-            $event.preventDefault()
-            return _vm.onSubmit($event)
-          }
-        }
-      },
-      [
-        _c("div", { staticClass: "field" }, [
-          _c("label", { staticClass: "label" }, [_vm._v("vManage IP Address")]),
-          _vm._v(" "),
-          _c("div", { staticClass: "control" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.vmanageIP,
-                  expression: "vmanageIP"
-                }
-              ],
-              staticClass: "input",
-              attrs: {
-                type: "text",
-                placeholder: "192.168.0.1",
-                id: "vmanageIP",
-                name: "vmanageIP",
-                required: ""
-              },
-              domProps: { value: _vm.vmanageIP },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.vmanageIP = $event.target.value
-                }
-              }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "field" }, [
-          _c("label", { staticClass: "label" }, [_vm._v("Target IP Address")]),
-          _vm._v(" "),
-          _c("div", { staticClass: "control" }, [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.ip,
-                  expression: "ip"
-                }
-              ],
-              staticClass: "input",
-              attrs: {
-                type: "text",
-                placeholder: "192.168.0.2, 192.168.0.3, 192.168.0.4",
-                id: "ip",
-                name: "ip",
-                required: ""
-              },
-              domProps: { value: _vm.ip },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.ip = $event.target.value
-                }
-              }
-            })
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "field" }, [
-          _c("div", { staticClass: "control" }, [
-            _c(
-              "button",
-              {
-                class: {
-                  button: true,
-                  "is-link": true,
-                  "is-loading": _vm.loading
-                }
-              },
-              [_vm._v("Submit")]
-            )
-          ])
-        ])
-      ]
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "section" }, [
+    _c("div", { staticClass: "box" }, [
+      _c("h1", { staticClass: "title is-4" }, [
+        _vm._v("1. Install Self-signed Root Certificate")
+      ]),
+      _vm._v(" "),
       _c(
-        "span",
+        "form",
         {
+          attrs: { method: "POST", action: "/vedge/push" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.onSubmit1($event)
+            }
+          }
+        },
+        [
+          _c("div", { staticClass: "field" }, [
+            _c("label", { staticClass: "label" }, [
+              _vm._v("Target IP Address")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "control" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.ip1,
+                    expression: "ip1"
+                  }
+                ],
+                staticClass: "input",
+                attrs: {
+                  type: "text",
+                  placeholder: "192.168.0.1, 192.168.0.2, 192.168.0.3",
+                  id: "ip1",
+                  name: "ip1",
+                  required: ""
+                },
+                domProps: { value: _vm.ip1 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.ip1 = $event.target.value
+                  }
+                }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("label", { staticClass: "label" }, [_vm._v("Root Certificate")]),
+            _vm._v(" "),
+            _c("div", { staticClass: "control" }, [
+              _c("textarea", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.cert1,
+                    expression: "cert1"
+                  }
+                ],
+                staticClass: "textarea",
+                attrs: {
+                  placeholder: "Textarea",
+                  rows: "20",
+                  spellcheck: "false",
+                  id: "cert1",
+                  name: "cert1",
+                  required: ""
+                },
+                domProps: { value: _vm.cert1 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.cert1 = $event.target.value
+                  }
+                }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("div", { staticClass: "control" }, [
+              _c(
+                "button",
+                {
+                  class: {
+                    button: true,
+                    "is-link": true,
+                    "is-loading": _vm.loading1
+                  }
+                },
+                [_vm._v("Submit")]
+              )
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "section" }, [
+        _c(
+          "span",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.failed1.length === 0 && _vm.status1 === 200,
+                expression: "failed1.length === 0 && status1 === 200"
+              }
+            ],
+            staticClass: "help is-success is-size-6"
+          },
+          [_vm._v("Completed")]
+        ),
+        _vm._v(" "),
+        _c(
+          "span",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.failed1.length !== 0,
+                expression: "failed1.length !== 0"
+              }
+            ],
+            staticClass: "help is-danger is-size-6"
+          },
+          [_vm._v("Failed to install the certificate on...")]
+        ),
+        _vm._v(" "),
+        _c("span", {
           directives: [
             {
               name: "show",
               rawName: "v-show",
-              value: _vm.failed.length !== 0,
-              expression: "failed.length !== 0"
+              value: _vm.failed1.length !== 0,
+              expression: "failed1.length !== 0"
             }
           ],
-          staticClass: "help is-danger is-size-6"
+          staticClass: "help is-danger is-size-6",
+          domProps: { textContent: _vm._s(_vm.failed1.join(", ")) }
+        })
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "box" }, [
+      _c("h1", { staticClass: "title is-4" }, [
+        _vm._v("2. Assign Chassis Number and Token")
+      ]),
+      _vm._v(" "),
+      _c(
+        "form",
+        {
+          attrs: { method: "POST", action: "/vedge" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.onSubmit2($event)
+            }
+          }
         },
-        [_vm._v("Failed to install the certificate on...")]
+        [
+          _c("div", { staticClass: "field" }, [
+            _c("label", { staticClass: "label" }, [
+              _vm._v("vManage IP Address")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "control" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.vmanageIP2,
+                    expression: "vmanageIP2"
+                  }
+                ],
+                staticClass: "input",
+                attrs: {
+                  type: "text",
+                  placeholder: "192.168.0.1",
+                  id: "vmanageIP2",
+                  name: "vmanageIP2",
+                  required: ""
+                },
+                domProps: { value: _vm.vmanageIP2 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.vmanageIP2 = $event.target.value
+                  }
+                }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("label", { staticClass: "label" }, [
+              _vm._v("Target IP Address")
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "control" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.ip2,
+                    expression: "ip2"
+                  }
+                ],
+                staticClass: "input",
+                attrs: {
+                  type: "text",
+                  placeholder: "192.168.0.2, 192.168.0.3, 192.168.0.4",
+                  id: "ip2",
+                  name: "ip2",
+                  required: ""
+                },
+                domProps: { value: _vm.ip2 },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.ip2 = $event.target.value
+                  }
+                }
+              })
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "field" }, [
+            _c("div", { staticClass: "control" }, [
+              _c(
+                "button",
+                {
+                  class: {
+                    button: true,
+                    "is-link": true,
+                    "is-loading": _vm.loading2
+                  }
+                },
+                [_vm._v("Submit")]
+              )
+            ])
+          ])
+        ]
       ),
       _vm._v(" "),
-      _c("span", {
-        directives: [
+      _c("div", { staticClass: "section" }, [
+        _c(
+          "span",
           {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.failed.length !== 0,
-            expression: "failed.length !== 0"
-          }
-        ],
-        staticClass: "help is-danger is-size-6",
-        domProps: { textContent: _vm._s(_vm.failed.join(", ")) }
-      })
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.failed2.length === 0 && _vm.status2 === 200,
+                expression: "failed2.length === 0 && status2 === 200"
+              }
+            ],
+            staticClass: "help is-success is-size-6"
+          },
+          [_vm._v("Completed")]
+        ),
+        _vm._v(" "),
+        _c(
+          "span",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.failed2.length !== 0,
+                expression: "failed2.length !== 0"
+              }
+            ],
+            staticClass: "help is-danger is-size-6"
+          },
+          [_vm._v("Failed to install the certificate on...")]
+        ),
+        _vm._v(" "),
+        _c("span", {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.failed2.length !== 0,
+              expression: "failed2.length !== 0"
+            }
+          ],
+          staticClass: "help is-danger is-size-6",
+          domProps: { textContent: _vm._s(_vm.failed2.join(", ")) }
+        })
+      ])
     ])
   ])
 }
@@ -16709,12 +17059,12 @@ module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-4af7d429", module.exports)
+    require("vue-hot-reload-api")      .rerender("data-v-4e6267a0", module.exports)
   }
 }
 
 /***/ }),
-/* 46 */
+/* 52 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

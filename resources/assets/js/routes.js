@@ -3,19 +3,15 @@ import VueRouter from 'vue-router'
 let routes = [
   {
     path: '/',
-    redirect: '/rootcert'
+    redirect: '/vedge'
   },
   {
-    path: '/rootcert',
-    component: require('./views/RootCert')
+    path: '/controllers',
+    component: require('./views/Controllers')
   },
   {
-    path: '/csr',
-    component: require('./views/CSR')
-  },
-  {
-    path: '/activate',
-    component: require('./views/Activation')
+    path: '/vedge',
+    component: require('./views/vEdge')
   },
 ]
 
