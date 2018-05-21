@@ -2,7 +2,7 @@
     <div>
         <div class="box">
             <h1 class="title is-4">1. Install Self-signed Root Certificate</h1>
-            <form method="POST" action="/vedge/push" @submit.prevent="onSubmit1">
+            <form method="POST" @submit.prevent="onSubmit1">
                 <div class="field">
                     <label class="label">Target IP Address</label>
                     <div class="control">
@@ -32,7 +32,7 @@
 
         <div class="box">
             <h1 class="title is-4">2. Re-sync Trust Store on vManage</h1>
-            <form method="POST" action="/vedge/resync" @submit.prevent="onSubmit2">
+            <form method="POST" @submit.prevent="onSubmit2">
                 <div class="field">
                     <label class="label">vManage IP Address</label>
                     <div class="control">
@@ -46,13 +46,14 @@
                 </div>
             </form>
             <div class="section">
-                <span class="help is-success is-size-6" v-show="syncRootCertChain2 !== ''" v-text="'syncRootCertChain: ' + syncRootCertChain2"></span>
+                <span class="help is-success is-size-6" v-show="syncRootCertChain2 !== 'fail' && syncRootCertChain2 !== ''" v-text="'syncRootCertChain: ' + syncRootCertChain2"></span>
+                <span class="help is-danger is-size-6" v-show="syncRootCertChain2 === 'fail'">Failed. <br>Please make sure the vManage web console is ready.</span>
             </div>
         </div>
 
         <div class="box">
             <h1 class="title is-4">3. Generate Certificate</h1>
-            <form method="POST" action="/csr" @submit.prevent="onSubmit3">
+            <form method="POST" @submit.prevent="onSubmit3">
                 <div class="field is-horizontal">
                     <div class="field-body">
                         <div class="field">
@@ -141,9 +142,13 @@
                 }
                 axios.post('/controllers/resync', temp)
                     .then(response => {
-                        this.loading2 = false
-                        this.syncRootCertChain2 = response.data.r1.syncRootCertChain
                         console.log(response)
+                        this.loading2 = false
+                        if (response.data.r1) {
+                            this.syncRootCertChain2 = response.data.r1.syncRootCertChain
+                        } else {
+                            this.syncRootCertChain2 = 'fail'
+                        }
                     })
                     .catch(error => {
                         this.loading2 = false

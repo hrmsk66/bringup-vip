@@ -16,10 +16,10 @@
 <div class="tabs is-fullwidth">
     <ul>
         <router-link tag="li" to="/controllers">
-            <a>BringUp Controllers</a>
+            <a>Bring Up Controllers</a>
         </router-link>
         <router-link tag="li" to="/vedge">
-            <a>BringUp vEdge</a>
+            <a>Bring Up vEdge</a>
         </router-link>
     </ul>
 </div>

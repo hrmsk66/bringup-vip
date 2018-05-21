@@ -40,7 +40,8 @@ class vEdge extends Controller
 
         $vmanageIP   = $request->input('vmanageIP');
 
-        $cmd1 = "curl --noproxy '*' -s -u admin:admin -k https://${vmanageIP}:443/dataservice/certificate/vedge/list\?model\=vedge-cloud\&state\=tokengenerated | jq -r '[.data[range(0;20)] | { uuid: .uuid, token: .serialNumber }]' > ./vedgelist";
+        // $cmd1 = "curl --noproxy '*' -s -u admin:admin -k https://${vmanageIP}:443/dataservice/certificate/vedge/list\?model\=vedge-cloud\&state\=tokengenerated | jq -r '[.data[range(0;20)] | { uuid: .uuid, token: .serialNumber }]' > ./vedgelist";
+        $cmd1 = "curl --noproxy '*' -s -u admin:admin -k https://${vmanageIP}:443/dataservice/certificate/vedge/list\?model\=vedge-cloud\&state\=tokengenerated | jq -r '[.data[] | { uuid: .uuid, token: .serialNumber }]' > ./vedgelist";
         exec($cmd1, $r1);
         $json = file_get_contents('./vedgelist');
         $vedgelist = json_decode($json, true);

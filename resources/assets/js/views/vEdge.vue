@@ -2,7 +2,7 @@
     <div>
         <div class="box">
             <h1 class="title is-4">1. Install Self-signed Root Certificate</h1>
-            <form method="POST" action="/vedge/push" @submit.prevent="onSubmit1">
+            <form method="POST" @submit.prevent="onSubmit1">
                 <div class="field">
                     <label class="label">Target IP Address</label>
                     <div class="control">
@@ -25,13 +25,13 @@
             </form>
             <div class="section">
                 <span class="help is-success is-size-6" v-show="failed1.length === 0 && status1 === 200">Completed</span>
-                <span class="help is-danger is-size-6" v-show="failed1.length !== 0">Failed to install the certificate on...</span>
+                <span class="help is-danger is-size-6" v-show="failed1.length !== 0">Failed to install the certificate on:</span>
                 <span class="help is-danger is-size-6" v-show="failed1.length !== 0" v-text="failed1.join(', ')"></span>
             </div>
         </div>
         <div class="box">
             <h1 class="title is-4">2. Assign Chassis Number and Token</h1>
-            <form method="POST" action="/vedge" @submit.prevent="onSubmit2">
+            <form method="POST" @submit.prevent="onSubmit2">
                 <div class="field">
                     <label class="label">vManage IP Address</label>
                     <div class="control">
@@ -54,7 +54,8 @@
             </form>
             <div class="section">
                 <span class="help is-success is-size-6" v-show="failed2.length === 0 && status2 === 200">Completed</span>
-                <span class="help is-danger is-size-6" v-show="failed2.length !== 0">Failed to install the certificate on...</span>
+                <span class="help is-danger is-size-6" v-show="status2 === 502">Failed to fetch vedgeList.<br>Please make sure the list is loaded to vManage.</span>
+                <span class="help is-danger is-size-6" v-show="failed2.length !== 0">Failed to activate:</span>
                 <span class="help is-danger is-size-6" v-show="failed2.length !== 0" v-text="failed2.join(', ')"></span>
             </div>
         </div>
@@ -126,10 +127,22 @@
                 })
             },
             activateDevice(target, i) {
+                console.log(target, i)
                 return axios.post('/vedge/activate', {
                     ip: target,
                     uuid: this.serial2[i]['uuid'],
                     token: this.serial2[i]['token']
+                })
+                .then(response => {
+                    const rcode1 = response.data.r1[response.data.r1.length - 1]
+                    if (rcode1 === '0') {
+                        console.log(`done ${response.data.target}`)
+                    } else {
+                        this.failed2.push(response.data.target)
+                    }
+                })
+                .catch(error => {
+                    this.failed2.push(target)
                 })
             },
             onSubmit2() {
@@ -138,29 +151,30 @@
                 this.fetchSerial()
                     .then(response => {
                         console.log(response)
+                        if (response.data.vedgelist.length === 0) {
+                            this.status2 = 502
+                            throw "Failed to fetch vedgeList."
+                        } 
                         this.serial2 = response.data.vedgelist
                         const promises = this.ips2.map((ip, i) => this.activateDevice(ip, i))
+                        console.log(promises)
                         Promise.all(promises)
                             .then(responses => {
-                                responses.forEach(response => {
-                                    const r1 = response.data.r1
-                                    const rcode1 = response.data.r1[response.data.r1.length - 1]
-                                    if (rcode1 === '0') {
-                                        console.log(`done ${response.data.target}`)
-                                    } else {
-                                        this.failed2.push(response.data.target)
-                                    }
-                                })
                                 this.status2 = 200
                                 this.loading2 = false
                                 console.log(responses)
                             })
-                            .catch(error => {
+                            .catch(errors => {
                                 this.loading2 = false
-                                console.log(error)
+                                this.status = 501
+                                console.log(errors)
                             })
                     })
-                    .catch(error => console.log(error))
+                    .catch(error => {
+                        this.loading2 = false
+                        this.status = 502
+                        console.log(error)
+                    })
             }
         },
         mounted() {
