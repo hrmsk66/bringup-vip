@@ -54,7 +54,7 @@
             </form>
             <div class="section">
                 <span class="help is-success is-size-6" v-show="failed2.length === 0 && status2 === 200">Completed</span>
-                <span class="help is-danger is-size-6" v-show="status2 === 502">Failed to fetch vedgeList.<br>Please make sure the list is loaded to vManage.</span>
+                <span class="help is-danger is-size-6" v-show="status2 === 501">Failed to fetch vedgeList.<br>Please make sure the list is loaded to vManage.</span>
                 <span class="help is-danger is-size-6" v-show="failed2.length !== 0">Failed to activate:</span>
                 <span class="help is-danger is-size-6" v-show="failed2.length !== 0" v-text="failed2.join(', ')"></span>
             </div>
@@ -96,6 +96,7 @@
             },
             onSubmit1() {
                 this.failed1 = []
+                this.status1 = ''
                 this.loading1 = true
                 const promises = this.ips1.map(ip => this.pushCert(ip))
 
@@ -137,27 +138,30 @@
                     const rcode1 = response.data.r1[response.data.r1.length - 1]
                     if (rcode1 === '0') {
                         console.log(`done ${response.data.target}`)
+                        return response
                     } else {
                         this.failed2.push(response.data.target)
+                        return response
                     }
                 })
                 .catch(error => {
                     this.failed2.push(target)
+                    return error
                 })
             },
             onSubmit2() {
                 this.failed2 = []
+                this.status2 = ''
                 this.loading2 = true
                 this.fetchSerial()
                     .then(response => {
                         console.log(response)
                         if (response.data.vedgelist.length === 0) {
-                            this.status2 = 502
+                            this.status2 = 501
                             throw "Failed to fetch vedgeList."
                         } 
                         this.serial2 = response.data.vedgelist
                         const promises = this.ips2.map((ip, i) => this.activateDevice(ip, i))
-                        console.log(promises)
                         Promise.all(promises)
                             .then(responses => {
                                 this.status2 = 200
@@ -166,13 +170,13 @@
                             })
                             .catch(errors => {
                                 this.loading2 = false
-                                this.status = 501
+                                this.status = 500
                                 console.log(errors)
                             })
                     })
                     .catch(error => {
                         this.loading2 = false
-                        this.status = 502
+                        this.status = 501
                         console.log(error)
                     })
             }

@@ -110,6 +110,7 @@
             },
             onSubmit1() {
                 this.failed1 = []
+                this.status1 = ''
                 this.loading1 = true
                 const promises = this.ips1.map(ip => this.pushCert(ip))
 

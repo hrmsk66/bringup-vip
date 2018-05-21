@@ -16054,6 +16054,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.failed1 = [];
+            this.status1 = '';
             this.loading1 = true;
             var promises = this.ips1.map(function (ip) {
                 return _this.pushCert(ip);
@@ -16672,6 +16673,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             this.failed1 = [];
+            this.status1 = '';
             this.loading1 = true;
             var promises = this.ips1.map(function (ip) {
                 return _this.pushCert(ip);
@@ -16725,6 +16727,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this3 = this;
 
             this.failed2 = [];
+            this.status2 = '';
             this.loading2 = true;
             this.fetchSerial().then(function (response) {
                 console.log(response);
