@@ -4,12 +4,13 @@ USER='admin'
 PSWD='admin\n'
 CERT='./rootca/temp/cacert.pem'
 HOST=$1
+PORT=$2
 
 echo "sending CA cert to $HOST"
 
 expect -c "
 set timeout 5
-spawn scp -o \"StrictHostKeyChecking no\" -o \"UserKnownHostsFile=/dev/null\" $CERT $USER@$HOST:~/
+spawn scp -P $PORT -o \"StrictHostKeyChecking no\" -o \"UserKnownHostsFile=/dev/null\" $CERT $USER@$HOST:~/
 expect {
     default {exit 2}
     \"$USER@$HOST's password: \" {

@@ -84,7 +84,7 @@
     export default {
         data() {
             return {
-                ip1: '',
+                ip1: '192.168.0.1, 192.168.0.2, 192.168.0.3',
                 cert1: '',
                 loading1: false,
                 status1: '',
@@ -98,13 +98,17 @@
         },
         computed: {
             ips1() {
-                return this.ip1.replace(' ', '').split(',')
+                return this.ip1.replace(' ', '').split(',').map(x => x.split(':'))
             },
+            vmanageIPPort() {
+                return this.vmanageIP2.split(':')
+            }
         },
         methods: {
-            pushCert(target) {
+            pushCert(ip, port='22') {
                 return axios.post('/controllers/push', {
-                    ip: target,
+                    ip,
+                    port,
                     cert: this.cert1
                 })
             },
@@ -112,8 +116,9 @@
                 this.failed1 = []
                 this.status1 = ''
                 this.loading1 = true
-                const promises = this.ips1.map(ip => this.pushCert(ip))
-
+                const promises = this.ips1.map(x => {
+                    return x.length === 2 ? this.pushCert(x[0], x[1]) : this.pushCert(x[0])
+                })
                 Promise.all(promises)
                     .then(responses => {
                         responses.forEach(response => {
@@ -138,23 +143,25 @@
             },
             onSubmit2() {
                 this.loading2 = true
-                let temp = {
-                    vmanageIP: this.vmanageIP2
-                }
-                axios.post('/controllers/resync', temp)
-                    .then(response => {
-                        console.log(response)
-                        this.loading2 = false
-                        if (response.data.r1) {
-                            this.syncRootCertChain2 = response.data.r1.syncRootCertChain
-                        } else {
-                            this.syncRootCertChain2 = 'fail'
-                        }
-                    })
-                    .catch(error => {
-                        this.loading2 = false
-                        console.log(error)
-                    })
+                const vmanageIP = this.vmanageIPPort[0]
+                const vmanagePort = this.vmanageIPPort.length === 2 ? this.vmanageIPPort[1] : '8443'
+                axios.post('/controllers/resync', {
+                    vmanageIP,
+                    vmanagePort
+                })
+                .then(response => {
+                    console.log(response)
+                    this.loading2 = false
+                    if (response.data.r1) {
+                        this.syncRootCertChain2 = response.data.r1.syncRootCertChain
+                    } else {
+                        this.syncRootCertChain2 = 'fail'
+                    }
+                })
+                .catch(error => {
+                    this.loading2 = false
+                    console.log(error)
+                })
             },
             onSubmit3() {
                 let temp = {

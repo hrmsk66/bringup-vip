@@ -1,13 +1,14 @@
 #!/bin/bash
 
 HOST=$1
+PORT=$2
 USER='admin'
 PSWD='admin\n'
 CERT='/home/admin/cacert.pem'
 
 expect -c "
 set timeout 5
-spawn ssh -o \"StrictHostKeyChecking no\" -o \"UserKnownHostsFile=/dev/null\" $USER@$HOST
+spawn ssh -p $PORT -o \"StrictHostKeyChecking no\" -o \"UserKnownHostsFile=/dev/null\" $USER@$HOST
 expect {
     default {exit 2}
     \"$USER@$HOST's password: \" {

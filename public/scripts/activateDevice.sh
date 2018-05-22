@@ -1,14 +1,15 @@
 #!/bin/bash
 
 HOST=$1
-UUID=$2
-TOKEN=$3
+PORT=$2
+UUID=$3
+TOKEN=$4
 USER='admin'
 PSWD='admin\n'
 
 expect -c "
 set timeout 5
-spawn ssh -o \"StrictHostKeyChecking no\" -o \"UserKnownHostsFile=/dev/null\" $USER@$HOST
+spawn ssh -p $PORT -o \"StrictHostKeyChecking no\" -o \"UserKnownHostsFile=/dev/null\" $USER@$HOST
 expect {
     default {exit 2}
     \"$USER@$HOST's password: \" {

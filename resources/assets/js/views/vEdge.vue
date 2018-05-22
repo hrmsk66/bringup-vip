@@ -81,16 +81,20 @@
         },
         computed: {
             ips1() {
-                return this.ip1.replace(' ', '').split(',')
+                return this.ip1.replace(' ', '').split(',').map(x => x.split(':'))
             },
             ips2() {
-                return this.ip2.replace(' ', '').split(',')
+                return this.ip2.replace(' ', '').split(',').map(x => x.split(':'))
+            },
+            vmanageIPPort() {
+                return this.vmanageIP2.split(':')
             }
         },
         methods: {
-            pushCert(target) {
+            pushCert(ip, port='22') {
                 return axios.post('/vedge/push', {
-                    ip: target,
+                    ip,
+                    port,
                     cert: this.cert1
                 })
             },
@@ -98,8 +102,9 @@
                 this.failed1 = []
                 this.status1 = ''
                 this.loading1 = true
-                const promises = this.ips1.map(ip => this.pushCert(ip))
-
+                const promises = this.ips1.map(x => {
+                    return x.length === 2 ? this.pushCert(x[0], x[1]) : this.pushCert(x[0])
+                })
                 Promise.all(promises)
                     .then(responses => {
                         responses.forEach(response => {
@@ -123,14 +128,17 @@
                     })
             },
             fetchSerial() {
+                const vmanageIP = this.vmanageIPPort[0]
+                const vmanagePort = this.vmanageIPPort.length === 2 ? this.vmanageIPPort[1] : '8443'
                 return axios.post('/vedge/list', {
-                    vmanageIP: this.vmanageIP2
+                    vmanageIP,
+                    vmanagePort
                 })
             },
-            activateDevice(target, i) {
-                console.log(target, i)
+            activateDevice(ip,port,i) {
                 return axios.post('/vedge/activate', {
-                    ip: target,
+                    ip,
+                    port,
                     uuid: this.serial2[i]['uuid'],
                     token: this.serial2[i]['token']
                 })
@@ -161,7 +169,7 @@
                             throw "Failed to fetch vedgeList."
                         } 
                         this.serial2 = response.data.vedgelist
-                        const promises = this.ips2.map((ip, i) => this.activateDevice(ip, i))
+                        const promises = this.ips2.map(([ip,port='22'], i) => this.activateDevice(ip,port,i))
                         Promise.all(promises)
                             .then(responses => {
                                 this.status2 = 200

@@ -16025,7 +16025,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
-            ip1: '',
+            ip1: '192.168.0.1, 192.168.0.2, 192.168.0.3',
             cert1: '',
             loading1: false,
             status1: '',
@@ -16040,13 +16040,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: {
         ips1: function ips1() {
-            return this.ip1.replace(' ', '').split(',');
+            return this.ip1.replace(' ', '').split(',').map(function (x) {
+                return x.split(':');
+            });
+        },
+        vmanageIPPort: function vmanageIPPort() {
+            return this.vmanageIP2.split(':');
         }
     },
     methods: {
-        pushCert: function pushCert(target) {
+        pushCert: function pushCert(ip) {
+            var port = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '22';
+
             return axios.post('/controllers/push', {
-                ip: target,
+                ip: ip,
+                port: port,
                 cert: this.cert1
             });
         },
@@ -16056,10 +16064,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.failed1 = [];
             this.status1 = '';
             this.loading1 = true;
-            var promises = this.ips1.map(function (ip) {
-                return _this.pushCert(ip);
+            var promises = this.ips1.map(function (x) {
+                return x.length === 2 ? _this.pushCert(x[0], x[1]) : _this.pushCert(x[0]);
             });
-
             Promise.all(promises).then(function (responses) {
                 responses.forEach(function (response) {
                     var r1 = response.data.r1;
@@ -16084,10 +16091,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             this.loading2 = true;
-            var temp = {
-                vmanageIP: this.vmanageIP2
-            };
-            axios.post('/controllers/resync', temp).then(function (response) {
+            var vmanageIP = this.vmanageIPPort[0];
+            var vmanagePort = this.vmanageIPPort.length === 2 ? this.vmanageIPPort[1] : '8443';
+            axios.post('/controllers/resync', {
+                vmanageIP: vmanageIP,
+                vmanagePort: vmanagePort
+            }).then(function (response) {
                 console.log(response);
                 _this2.loading2 = false;
                 if (response.data.r1) {
@@ -16572,6 +16581,8 @@ module.exports = Component.exports
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 //
 //
 //
@@ -16656,16 +16667,26 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     computed: {
         ips1: function ips1() {
-            return this.ip1.replace(' ', '').split(',');
+            return this.ip1.replace(' ', '').split(',').map(function (x) {
+                return x.split(':');
+            });
         },
         ips2: function ips2() {
-            return this.ip2.replace(' ', '').split(',');
+            return this.ip2.replace(' ', '').split(',').map(function (x) {
+                return x.split(':');
+            });
+        },
+        vmanageIPPort: function vmanageIPPort() {
+            return this.vmanageIP2.split(':');
         }
     },
     methods: {
-        pushCert: function pushCert(target) {
+        pushCert: function pushCert(ip) {
+            var port = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '22';
+
             return axios.post('/vedge/push', {
-                ip: target,
+                ip: ip,
+                port: port,
                 cert: this.cert1
             });
         },
@@ -16675,10 +16696,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.failed1 = [];
             this.status1 = '';
             this.loading1 = true;
-            var promises = this.ips1.map(function (ip) {
-                return _this.pushCert(ip);
+            var promises = this.ips1.map(function (x) {
+                return x.length === 2 ? _this.pushCert(x[0], x[1]) : _this.pushCert(x[0]);
             });
-
             Promise.all(promises).then(function (responses) {
                 responses.forEach(function (response) {
                     var r1 = response.data.r1;
@@ -16700,27 +16720,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         fetchSerial: function fetchSerial() {
+            var vmanageIP = this.vmanageIPPort[0];
+            var vmanagePort = this.vmanageIPPort.length === 2 ? this.vmanageIPPort[1] : '8443';
             return axios.post('/vedge/list', {
-                vmanageIP: this.vmanageIP2
+                vmanageIP: vmanageIP,
+                vmanagePort: vmanagePort
             });
         },
-        activateDevice: function activateDevice(target, i) {
+        activateDevice: function activateDevice(ip, port, i) {
             var _this2 = this;
 
-            console.log(target, i);
             return axios.post('/vedge/activate', {
-                ip: target,
+                ip: ip,
+                port: port,
                 uuid: this.serial2[i]['uuid'],
                 token: this.serial2[i]['token']
             }).then(function (response) {
                 var rcode1 = response.data.r1[response.data.r1.length - 1];
                 if (rcode1 === '0') {
                     console.log('done ' + response.data.target);
+                    return response;
                 } else {
                     _this2.failed2.push(response.data.target);
+                    return response;
                 }
             }).catch(function (error) {
                 _this2.failed2.push(target);
+                return error;
             });
         },
         onSubmit2: function onSubmit2() {
@@ -16732,26 +16758,30 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.fetchSerial().then(function (response) {
                 console.log(response);
                 if (response.data.vedgelist.length === 0) {
-                    _this3.status2 = 502;
+                    _this3.status2 = 501;
                     throw "Failed to fetch vedgeList.";
                 }
                 _this3.serial2 = response.data.vedgelist;
-                var promises = _this3.ips2.map(function (ip, i) {
-                    return _this3.activateDevice(ip, i);
+                var promises = _this3.ips2.map(function (_ref, i) {
+                    var _ref2 = _slicedToArray(_ref, 2),
+                        ip = _ref2[0],
+                        _ref2$ = _ref2[1],
+                        port = _ref2$ === undefined ? '22' : _ref2$;
+
+                    return _this3.activateDevice(ip, port, i);
                 });
-                console.log(promises);
                 Promise.all(promises).then(function (responses) {
                     _this3.status2 = 200;
                     _this3.loading2 = false;
                     console.log(responses);
                 }).catch(function (errors) {
                     _this3.loading2 = false;
-                    _this3.status = 501;
+                    _this3.status = 500;
                     console.log(errors);
                 });
             }).catch(function (error) {
                 _this3.loading2 = false;
-                _this3.status = 502;
+                _this3.status = 501;
                 console.log(error);
             });
         }
@@ -17062,8 +17092,8 @@ var render = function() {
               {
                 name: "show",
                 rawName: "v-show",
-                value: _vm.status2 === 502,
-                expression: "status2 === 502"
+                value: _vm.status2 === 501,
+                expression: "status2 === 501"
               }
             ],
             staticClass: "help is-danger is-size-6"
